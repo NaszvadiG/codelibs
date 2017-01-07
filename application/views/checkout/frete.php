@@ -19,19 +19,12 @@
 				let $resplist = '';
 
 				for(let data of response){
-					for(let val in data){
-						if( val == 'Codigo' ){
-							if( data[val] == '40010' ){
-								var freteService = 'Sedex';
-							}else{
-								var freteService = 'PAC';
-							}
-						}
-
-						if( val == 'ValorSemAdicionais' ){
-							var freteValor = data[val];
-						}
+					if( data.Codigo == '40010' ){
+						let freteService = 'Sedex';
+					}else{
+						let freteService = 'PAC';
 					}
+					let freteValor = data.ValorSemAdicionais;
 					$resplist += `<li><b>${freteService}:</b> R$ ${freteValor}</li>`;
 				}
 
