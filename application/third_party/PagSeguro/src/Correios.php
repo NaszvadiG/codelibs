@@ -3,6 +3,7 @@
 namespace PagSeguro;
 
 use PagSeguro\Http;
+use PagSeguro\XmlParser;
 
 class Correios {
 	
@@ -49,6 +50,17 @@ class Correios {
 		// Por padrão, Sedex e PAC
 		'nCdServico' => '40010,41106'
 	);
+
+	private function parseXml($data) {
+		// Creating an xml parser 
+		$xmlParser = new XmlParser($data);
+		// Verifying if is an XML
+		if ($xml = $xmlParser->getResult()) {
+			return $xml;
+		} else {
+			throw new \Exception("[$data] is not an XML");
+		}
+	}
 
 	private function setError( $msg ){
 		echo "<b>".get_class($this).":</b> {$msg}";
@@ -113,7 +125,11 @@ class Correios {
 		$httpConnection->post($this->_URL, $this->_params);
 		// Request OK getting the result
 		if ($httpConnection->getStatus() === 200) {
-			return simplexml_load_string($httpConnection->getResponse());
+			$dados = $httpConnection->getResponse();
+			$dados = preg_replace('/(<cResultado)(.*)?>/', '<cResultado>', $dados);
+			$dados = simplexml_load_string($dados);
+			$dados = (array)$dados->Servicos;
+			return $dados['cServico'];
 		} else {
 			throw new \Exception("API Request Error: ".$httpConnection->getStatus());
 		}

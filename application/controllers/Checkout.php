@@ -89,11 +89,15 @@ class Checkout extends CI_Controller {
 	}
 
 	public function frete(){
+		$this->load->view('checkout/frete');
+	}
+
+	public function calculafrete(){
 		$this->load->library('frete');
 
-		$dados = $this->frete->setCepOrigem('58.079-000')->setCepDestino('89182-000')->setFormato(1)->setDimensoes(0.3, 30, 20, 10)->setValorDeclarado(0)->consultar();
+		$dados = $this->frete->setCepOrigem('58.079-000')->setCepDestino($_POST['cepDestino'])->setFormato(1)->setDimensoes(0.3, 30, 20, 10)->setValorDeclarado(0)->consultar();
 
-		var_dump($dados);
+		echo json_encode($dados);
 	}
 
 }
